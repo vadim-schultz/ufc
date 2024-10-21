@@ -2,48 +2,77 @@ from typing import List, Tuple
 
 
 class Verse:
-    PREAMBLE = "There was an old lady who swallowed a"
-    POSTAMBLE = "I don't know why she swallowed a fly - perhaps she'll die!"
-    EPILOGUE = "...She's dead, of course!"
-
-    def __init__(self, name, consequence, ascendants: list, is_last: bool = False):
+    def __init__(self, name):
         self.name = name
+
+    @property
+    def preamble(self):
+        return f"There was an old lady who swallowed a {self.name}{self.punctuation}"
+
+    @property
+    def postamble(self):
+        return f"I don't know why she swallowed a {self.name} - perhaps she'll die!"
+
+    @property
+    def punctuation(self):
+        return "."
+
+    @property
+    def lyrics(self):
+        return "\n".join([self.preamble, self.postamble, "\n"])
+
+
+class LastVerse(Verse):
+
+    @property
+    def postamble(self):
+        return "...She's dead, of course!"
+
+    @property
+    def punctuation(self):
+        return "..."
+
+    @property
+    def lyrics(self):
+        return "\n".join([self.preamble, self.postamble])
+
+
+class VerseWithAscendants(Verse):
+
+    def __init__(self, name, consequence, ascendants: list):
+        super().__init__(name=name)
         self.consequence = consequence
         self.ascendants = list(reversed(ascendants))
-        self.is_last = is_last
 
     def __repr__(self):
         return f"<{self.name}>"
 
     @property
-    def terminator(self):
-        return "..." if self.is_last else ";"
+    def postamble(self):
+        name, _ = self.ascendants[-1]
+        return f"I don't know why she swallowed a {name} - perhaps she'll die!"
+
+    @property
+    def punctuation(self):
+        return ";"
 
     def get_ascendant_lines(self):
         lines = list()
         first = self.name
-        for animal in self.ascendants:
-            second = animal
-            lines.append(f"She swallowed the {first} to catch the {second},")
-            first = second[:]
+        for name, _ in self.ascendants:
+            lines.append(f"She swallowed the {first} to catch the {name},")
+            first = name[:]
 
         return lines
 
     @property
     def lyrics(self):
         _lyrics = list()
-        _lyrics.append(f"{self.PREAMBLE} {self.name}{self.terminator}")
-        if self.consequence:
-            _lyrics.append(self.consequence)
-
-        if not self.is_last:
-            _lyrics += self.get_ascendant_lines()
-
-        _lyrics.append(self.EPILOGUE if self.is_last else self.POSTAMBLE)
-
-        if not self.is_last:
-            _lyrics.append("\n")
-
+        _lyrics.append(self.preamble)
+        _lyrics.append(self.consequence)
+        _lyrics += self.get_ascendant_lines()
+        _lyrics.append(self.postamble)
+        _lyrics.append("\n")
         return "\n".join(_lyrics)
 
 
@@ -53,21 +82,31 @@ class Song:
         self.animals = animals
         self._verses = list()
 
+    def get_verse(self, index):
+        if index == 0:
+            name, _ = self.animals[0]
+            return Verse(name=name)
+
+        if index == len(self.animals) - 1:
+            name, _ = self.animals[-1]
+            return LastVerse(name=name)
+
+        name, consequence = self.animals[index]
+        ascendants = self.animals[:index]
+        return VerseWithAscendants(name=name, consequence=consequence, ascendants=ascendants)
+
     @property
     def verses(self):
-        ascendants: List[str] = []
 
-        for name, consequence in self.animals:
-            self._verses.append(Verse(name=name, consequence=consequence, ascendants=ascendants))
-            ascendants.append(name)
-
-        self._verses[-1].is_last = True
+        for index in range(len(self.animals)):
+            self._verses.append(self.get_verse(index))
 
         return self._verses
 
     @property
     def lyrics(self):
-        return "".join([verse.lyrics for verse in self.verses])
+        _lyrics = ["\n"] + [verse.lyrics for verse in self.verses]
+        return "".join(_lyrics)
 
 
 def vadim_implementation():
