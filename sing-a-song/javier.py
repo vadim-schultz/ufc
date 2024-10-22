@@ -1,2 +1,2 @@
-def javier_implementation():
+def implementation():
     return

@@ -1,9 +1,12 @@
-from alex import alex_implementation
+from alex import implementation as alex_impl
 from implementation import implementation
-from javier import javier_implementation
-from lars import lars_implementation
-from pratiksha import pratiksha_implementation
-from vadim import vadim_implementation
+from javier import implementation as javier_impl
+from lars import implementation as lars_impl
+from pratiksha import implementation as pratiksha_impl
+from vadim_v1 import implementation as vadim_impl1
+from vadim_v2 import implementation as vadim_impl2
+from vadim_v3 import implementation as vadim_impl3
+
 
 song = """
 There was an old lady who swallowed a fly.
@@ -49,7 +52,7 @@ There was an old lady who swallowed a horse...
 
 
 def test_alex_implementation():
-    assert alex_implementation() == song
+    assert alex_impl() == song
 
 
 def test_implementation():
@@ -57,17 +60,24 @@ def test_implementation():
 
 
 def test_javier_implementation():
-    assert javier_implementation() == song
+    assert javier_impl() == song
 
 
 def test_lars_implementation():
-    assert lars_implementation() == song
+    assert lars_impl() == song
 
 
 def test_pratiksha_implementation():
-    assert pratiksha_implementation() == song
+    assert pratiksha_impl() == song
 
 
-def test_vadim_implementation():
-    assert vadim_implementation() == song
+def test_vadim_implementation_v1():
+    assert vadim_impl1() == song
 
+
+def test_vadim_implementation_v2():
+    assert vadim_impl2() == song
+
+
+def test_vadim_implementation_v3():
+    assert vadim_impl3() == song

@@ -1,2 +1,2 @@
-def lars_implementation():
+def implementation():
     return

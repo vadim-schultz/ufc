@@ -1,2 +1,2 @@
-def pratiksha_implementation():
+def implementation():
     return

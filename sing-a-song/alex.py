@@ -1,2 +1,2 @@
-def alex_implementation():
+def implementation():
     return
