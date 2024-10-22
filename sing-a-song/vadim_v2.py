@@ -1,6 +1,5 @@
 from typing import List, Tuple
 
-
 class Verse:
     PUNCTUATION = "."
 
@@ -16,11 +15,11 @@ class Verse:
 
     @property
     def postamble(self):
-        return f"I don't know why she swallowed a {self.name} - perhaps she'll die!"
+        return f"I don't know why she swallowed a {self.name} - perhaps she'll die!\n\n"
 
     @property
     def lyrics(self):
-        return "\n".join([self.preamble, self.postamble, "\n"])
+        return "\n".join([self.preamble, self.postamble])
 
 
 class LastVerse(Verse):
@@ -29,10 +28,6 @@ class LastVerse(Verse):
     @property
     def postamble(self):
         return "...She's dead, of course!"
-
-    @property
-    def lyrics(self):
-        return "\n".join([self.preamble, self.postamble])
 
 
 class VerseWithAscendants(Verse):
