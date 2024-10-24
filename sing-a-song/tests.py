@@ -6,6 +6,7 @@ from pratiksha import implementation as pratiksha_impl
 from vadim_v1 import implementation as vadim_impl1
 from vadim_v2 import implementation as vadim_impl2
 from vadim_v3 import implementation as vadim_impl3
+from vadim_fp import implementation as vadim_impl4
 
 
 song = """
@@ -81,3 +82,8 @@ def test_vadim_implementation_v2():
 
 def test_vadim_implementation_v3():
     assert vadim_impl3() == song
+
+
+def test_vadim_implementation_v4():
+    assert vadim_impl4() == song
+
