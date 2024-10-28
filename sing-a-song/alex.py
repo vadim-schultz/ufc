@@ -51,4 +51,6 @@ def implementation():
     ]
 
     song = Song(animals)
-    return song.generate_text()
+    song.generate_text()
+    return song.text
+
