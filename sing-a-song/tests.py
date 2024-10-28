@@ -3,10 +3,7 @@ from implementation import implementation
 from javier import implementation as javier_impl
 from lars import implementation as lars_impl
 from pratiksha import implementation as pratiksha_impl
-from vadim_v1 import implementation as vadim_impl1
-from vadim_v2 import implementation as vadim_impl2
-from vadim_v3 import implementation as vadim_impl3
-from vadim_fp import implementation as vadim_impl4
+from vadim.vadim_v3 import implementation as vadim_impl
 
 
 song = """
@@ -72,18 +69,5 @@ def test_pratiksha_implementation():
     assert pratiksha_impl() == song
 
 
-def test_vadim_implementation_v1():
-    assert vadim_impl1() == song
-
-
-def test_vadim_implementation_v2():
-    assert vadim_impl2() == song
-
-
-def test_vadim_implementation_v3():
-    assert vadim_impl3() == song
-
-
-def test_vadim_implementation_v4():
-    assert vadim_impl4() == song
-
+def test_vadim_implementation():
+    assert vadim_impl() == song
