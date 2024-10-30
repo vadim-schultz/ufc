@@ -1,6 +1,5 @@
 from typing import List, Tuple
 
-
 class Verse:
     PUNCTUATION = "."
 
@@ -16,11 +15,11 @@ class Verse:
 
     @property
     def postamble(self):
-        return f"I don't know why she swallowed a {self.name} - perhaps she'll die!"
+        return f"I don't know why she swallowed a {self.name} - perhaps she'll die!\n\n"
 
     @property
     def lyrics(self):
-        return "\n".join([self.preamble, self.postamble, "\n"])
+        return "\n".join([self.preamble, self.postamble])
 
 
 class LastVerse(Verse):
@@ -30,38 +29,26 @@ class LastVerse(Verse):
     def postamble(self):
         return "...She's dead, of course!"
 
-    @property
-    def lyrics(self):
-        return "\n".join([self.preamble, self.postamble])
-
 
 class VerseWithAscendants(Verse):
     PUNCTUATION = ";"
 
-    def __init__(self, name, consequence, ascendants):
+    def __init__(self, name, consequence, ascendants: list):
         super().__init__(name=name)
         self.consequence = consequence
-        self.ascendants = ascendants
-        self.ascendants.append(self.name)
-        self.ascendants.reverse()
+        self.ascendants = list(reversed(ascendants))
 
     @property
     def postamble(self):
-        name = self.ascendants[-1]
+        name, _ = self.ascendants[-1]
         return f"I don't know why she swallowed a {name} - perhaps she'll die!"
-
-    def get_line(self, index):
-        punctuation = ","
-        if index == len(self.ascendants) - 2:
-            punctuation = ";"
-        first = self.ascendants[index]
-        second = self.ascendants[index + 1]
-        return f"She swallowed the {first} to catch the {second}{punctuation}"
 
     def get_ascendant_lines(self):
         lines = list()
-        for index in range(len(self.ascendants) - 1):
-            lines.append(self.get_line(index))
+        first = self.name
+        for name, _ in self.ascendants:
+            lines.append(f"She swallowed the {first} to catch the {name},")
+            first = name[:]
 
         return lines
 
@@ -92,7 +79,7 @@ class Song:
             return LastVerse(name=name)
 
         name, consequence = self.animals[index]
-        ascendants = [name for name, _ in self.animals[:index]]
+        ascendants = self.animals[:index]
         return VerseWithAscendants(name=name, consequence=consequence, ascendants=ascendants)
 
     @property
