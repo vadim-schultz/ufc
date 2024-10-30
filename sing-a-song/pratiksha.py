@@ -1,68 +1,36 @@
-class Animal:
-    def __init__(self, name):
-        self.name = name
-        self.lines = {
-            "fly": "I don't know why she swallowed a fly - perhaps she'll die!\n",
-            "spider": "That wriggled and wiggled and tickled inside her.",
-            "bird": "How absurd to swallow a bird.",
-            "cat": "Fancy that to swallow a cat!",
-            "dog": "What a hog, to swallow a dog!",
-            "cow": "I don't know how she swallowed a cow!",
-            "horse": ""
-        }
-    
-    def get_intro(self):
-        return f"There was an old lady who swallowed a {self.name};"
-    
-    def get_specific_line(self):
-        return self.lines.get(self.name, "")
-    
+class Song:
+    def __init__(self, animals_with_lines):
+        self.animals = animals_with_lines
 
-def animal_factory(name):
-    """Factory method to create Animal instances."""
-    return Animal(name)
+    def generate_song(self):
+        verses = []
+        for i, (animal, line) in enumerate(self.animals):
+            verse = f"There was an old lady who swallowed a {animal};\n"
+            verse += f"{line}\n"
+            
+            if i > 0 and i < len(self.animals) - 1:
+                for j in range(i, 0, -1):
+                    verse += f"She swallowed the {self.animals[j][0]} to catch the {self.animals[j - 1][0]};\n"
+                verse += f"{self.animals[0][1]}\n"  
 
-def generate_song(animals):
-    """
-    Generates a nursery rhyme song based on a list of animals.
+            elif i == len(self.animals) - 1:
+                if "dead" in line.lower():  
+                    verses.append(verse.strip())
+                    break
 
-    Parameters:
-        animals (list): A list of animal names in the order they are swallowed.
-
-    Returns:
-        str: The complete song as a string.
-    """
-    if not animals:
-        return "No animals provided."
-
-    song_lines = []
-    for i in range(len(animals)):
-        current_animal = animal_factory(animals[i])
-        song_lines.append(current_animal.get_intro())
+            verses.append(verse.strip())
         
-        # If the current animal is a horse, add its line and break out of the loop
-        if current_animal.name == "horse":
-            song_lines.append("...She's dead, of course!")
-            break
-        
-        # Add specific line for the animal if it's not a fly
-        specific_line = current_animal.get_specific_line()
-        if specific_line:
-            song_lines.append(specific_line)
-        
-        # Add lines for swallowing sequence, skipping it for the first animal
-        if i > 0:
-            for j in range(i, 0, -1):
-                song_lines.append(f"She swallowed the {animals[j]} to catch the {animals[j-1]};")
+        return "\n\n".join(verses)
 
-        # Always end each stanza with the "fly" line, except for "horse"
-        song_lines.append("I don't know why she swallowed a fly - perhaps she'll die!\n")
+animals_with_lines = [
+    ("fly", "I don't know why she swallowed a fly - perhaps she'll die!"),
+    ("spider", "That wriggled and wiggled and tickled inside her."),
+    ("bird", "How absurd to swallow a bird."),
+    ("cat", "Fancy that to swallow a cat!"),
+    ("dog", "What a hog, to swallow a dog!"),
+    ("cow", "I don't know how she swallowed a cow!"),
+    ("horse", "...She's dead, of course!")
+]
 
-    return "\n".join(song_lines)
-
-# List of animals to use in the song
-animals = ["fly", "spider", "bird", "cat", "dog", "cow", "horse"]
-
-# Generate and print the song
-song = generate_song(animals)
-print(song)
+song = Song(animals_with_lines)
+print(song.generate_song())
