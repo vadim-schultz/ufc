@@ -34,7 +34,6 @@ animals_with_lines = [
 ]
 
 song = Song(animals_with_lines)
-print(song.generate_song())
 
 
 def implementation():
