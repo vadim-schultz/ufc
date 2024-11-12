@@ -1,4 +1,8 @@
-from typing import Tuple, Generator, Iterable
+from collections import namedtuple
+from typing import Tuple, List
+
+
+Animal = namedtuple("Animal", "name consequence")
 
 
 class Verse:
@@ -34,10 +38,10 @@ class LastVerse(Verse):
 class VerseWithAscendants(Verse):
     PUNCTUATION = ";"
 
-    def __init__(self, name: str, consequence: str, ascendants: Generator):
+    def __init__(self, name: str, consequence: str, ascendants: List):
         super().__init__(name=name)
         self.consequence = consequence
-        self.ascendants = tuple(reversed(tuple(ascendants)))
+        self.ascendants = list(reversed(ascendants))
 
     @property
     def postamble(self):
@@ -47,7 +51,7 @@ class VerseWithAscendants(Verse):
     def get_punctuation(self, item: str):
         return ";" if self.ascendants.index(item) == len(self.ascendants) - 1 else ","
 
-    def get_pairs(self, sequence: Tuple[str, ...]):
+    def get_pairs(self, sequence: List[str]):
         return zip(sequence, sequence[1:])
 
     def get_line(self, first: str, second: str):
@@ -72,20 +76,18 @@ class VerseWithAscendants(Verse):
 
 class Song:
 
-    def __init__(self, animals: Tuple[Tuple[str, str]]):
-        self.animals = animals
+    def __init__(self, animals: List[Tuple[str, str]]):
+        self.animals = [Animal(name, consequence) for name, consequence in animals]
 
     def get_verse(self, index):
         if index == 0:
-            name, _ = self.animals[0]
-            return Verse(name=name)
+            return Verse(name=self.animals[0].name)
 
         if index == len(self.animals) - 1:
-            name, _ = self.animals[-1]
-            return LastVerse(name=name)
+            return LastVerse(name=self.animals[-1].name)
 
         name, consequence = self.animals[index]
-        ascendants = (name for name, _ in self.animals[:index + 1])
+        ascendants = [animal.name for animal in self.animals[:index + 1]]
         return VerseWithAscendants(name=name, consequence=consequence, ascendants=ascendants)
 
     @property
@@ -98,7 +100,7 @@ class Song:
 
 
 def implementation():
-    animals = (
+    animals = [
         ("fly", ""),
         ("spider", "That wriggled and wiggled and tickled inside her."),
         ("bird", "How absurd to swallow a bird."),
@@ -106,10 +108,5 @@ def implementation():
         ("dog", "What a hog, to swallow a dog!"),
         ("cow", "I don't know how she swallowed a cow!"),
         ("horse", "")
-    )
+    ]
     return Song(animals=animals).lyrics
-
-
-def test_song():
-    print()
-    print(implementation())
