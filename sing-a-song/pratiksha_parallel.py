@@ -1,3 +1,5 @@
+import asyncio
+
 class Verse:
     def __init__(self, animals):
         self.animals = animals
@@ -35,8 +37,8 @@ class Verse:
         else:
             return "I don't know why she swallowed a fly - perhaps she'll die!"
 
-    def generate_verse(self, index: int):
-        """Generates all the lines for a single verse."""
+    async def generate_verse(self, index: int):
+        """Asynchronously generates all the lines for a single verse."""
         lines = []
         
         lines.append(self.intro(index))
@@ -52,21 +54,23 @@ class Verse:
         lines.append(self.end(index))
         
         lines.append("")  
-        return lines
+        return "\n".join(lines)
 
 
 class Song:
     def __init__(self, animals):
         self.verses = Verse(animals)
 
-    def lyrics(self):
-        lyrics = []
+    async def lyrics(self):
+        """Generate all verses concurrently using asyncio."""
+        tasks = []
         for i in range(len(self.verses.animals)):
-            lyrics.extend(self.verses.generate_verse(i))
-        return "\n".join(lyrics)
+            tasks.append(self.verses.generate_verse(i))  
+        results = await asyncio.gather(*tasks)
+        return "\n".join(results)
 
 
-def implementation():
+async def implementation():
     animals = [
         {"name": "fly", "special_line": ""},
         {"name": "spider", "special_line": "That wriggled and wiggled and tickled inside her."},
@@ -78,8 +82,7 @@ def implementation():
     ]
     
     song = Song(animals)
-    return song.lyrics()
+    return await song.lyrics()
 
 
-# Output the song lyrics
-print(implementation())
+print(asyncio.run(implementation()))
