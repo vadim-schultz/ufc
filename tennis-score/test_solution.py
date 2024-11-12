@@ -1,7 +1,6 @@
 import pytest
 
-from vadim.implementation import TennisGame
-
+from chatgpt.implementation import TennisGame
 
 @pytest.fixture
 def game():
@@ -9,7 +8,22 @@ def game():
 
 
 def test_initial_score(game):
-    assert game.get_score() == "Love-Love"
+    assert game.get_score() == "Love-All"
+
+
+def test_same_scores(game):
+    game.add_point("player1")
+    game.add_point("player2")
+    assert game.get_score() == "Fifteen-All"
+
+    game.add_point("player1")
+    game.add_point("player2")
+    assert game.get_score() == "Thirty-All"
+
+    # Deuce case
+    game.add_point("player1")
+    game.add_point("player2")
+    assert game.get_score() == "Deuce"
 
 
 def test_simple_scores(game):
@@ -41,13 +55,13 @@ def test_alternating_scores(game):
     assert game.get_score() == "Fifteen-Love"
 
     game.add_point("player2")
-    assert game.get_score() == "Fifteen-Fifteen"
+    assert game.get_score() == "Fifteen-All"
 
     game.add_point("player1")
     assert game.get_score() == "Thirty-Fifteen"
 
     game.add_point("player2")
-    assert game.get_score() == "Thirty-Thirty"
+    assert game.get_score() == "Thirty-All"
 
     game.add_point("player1")
     assert game.get_score() == "Forty-Thirty"
