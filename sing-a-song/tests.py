@@ -1,9 +1,4 @@
-from alex import implementation as alex_impl
-from implementation import implementation
-from javier import implementation as javier_impl
-from lars import implementation as lars_impl
-from pratiksha import implementation as pratiksha_impl
-from vadim.vadim_v3 import implementation as vadim_impl
+from florian.song_fp import implementation
 
 
 song = """
@@ -49,25 +44,5 @@ There was an old lady who swallowed a horse...
 ...She's dead, of course!"""
 
 
-def test_alex_implementation():
-    assert alex_impl() == song
-
-
 def test_implementation():
     assert implementation() == song
-
-
-def test_javier_implementation():
-    assert javier_impl() == song
-
-
-def test_lars_implementation():
-    assert lars_impl() == song
-
-
-def test_pratiksha_implementation():
-    assert pratiksha_impl() == song
-
-
-def test_vadim_implementation():
-    assert vadim_impl() == song
