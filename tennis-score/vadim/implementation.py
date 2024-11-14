@@ -1,6 +1,0 @@
-class TennisGame:
-    def add_point(self, player_name):
-        ...
-
-    def get_score(self):
-        ...

@@ -1,10 +1,11 @@
 import pytest
 
-from chatgpt.implementation import TennisGame
+from florian.implementation import TennisGame
+
 
 @pytest.fixture
 def game():
-    return TennisGame()
+    return TennisGame(players=["player1", "player2"])
 
 
 def test_initial_score(game):
@@ -113,7 +114,7 @@ def test_game_win_without_deuce(game):
     assert game.get_score() == "Game player1"
 
     # Reset for player 2 win test
-    game = TennisGame()
+    game = TennisGame(["player1", "player2"])
     for _ in range(4):
         game.add_point("player2")
 

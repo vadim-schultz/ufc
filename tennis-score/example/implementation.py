@@ -1,6 +1,6 @@
 class TennisGame:
-    def __init__(self):
-        self.scores = { "player1": 0, "player2": 0 }
+    def __init__(self, players: list[str]):
+        self.scores = {players[0]: 0, players[1]: 0}
 
     def add_point(self, player):
         # Increment score for the player
