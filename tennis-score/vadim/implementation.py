@@ -26,7 +26,7 @@ class Players:
         return len(self._players_list)
 
 
-class Translate:
+class Score:
     names = {
         0: "Love",
         1: "Fifteen",
@@ -37,7 +37,7 @@ class Translate:
     def __init__(self, points):
         self.points = points
 
-    def __sub__(self, other: "Translate"):
+    def __sub__(self, other: "Score"):
         this_points = self.names[self.points]
 
         if self.points == other.points:
@@ -49,7 +49,7 @@ class Translate:
 
 
 class State:
-    def __init__(self, context: "Score"):
+    def __init__(self, context: "TennisGame"):
         self.context = context
         
     @abstractmethod
@@ -64,12 +64,12 @@ class State:
 class EarlyGame(State):
 
     def get_score(self):
-        return Translate(self.context.players[0].points) - Translate(self.context.players[1].points)
+        return Score(self.context.players[0].points) - Score(self.context.players[1].points)
 
     def transition(self):
-        if self.context.deuce():
+        if self.context._deuce():
             return Deuce(context=self.context)
-        if not self.context.early_game() and self.context.margin():
+        if not self.context._early_game() and self.context._margin():
             return Game(context=self.context)
         return self
 
@@ -86,10 +86,10 @@ class Deuce(State):
 class Advantage(State):
 
     def get_score(self):
-        return f"Advantage {self.context.leader.name}"
+        return f"Advantage {self.context._leader.name}"
 
     def transition(self):
-        if self.context.margin():
+        if self.context._margin():
             return Game(context=self.context)
         return Deuce(context=self.context)
 
@@ -97,31 +97,31 @@ class Advantage(State):
 class Game(State):
 
     def get_score(self):
-        return f"Game {self.context.leader.name}"
+        return f"Game {self.context._leader.name}"
 
     def transition(self):
         ...
 
 
-class Score:
+class TennisGame:
     def __init__(self, players: list[str]):
         self.players = Players(players)
         self.state = EarlyGame(context=self)
 
-    def margin(self):
+    def _margin(self):
         return abs(self.players[0].points - self.players[1].points) >= 2
 
-    def advantage(self):
+    def _advantage(self):
         return abs(self.players[0].points - self.players[1].points) == 1
 
-    def deuce(self):
+    def _deuce(self):
         return all(i.points == 3 for i in self.players)
 
-    def early_game(self):
+    def _early_game(self):
         return all(i.points < 4 for i in self.players)
 
     @property
-    def leader(self):
+    def _leader(self):
         return max(self.players, key=lambda player: player.points)
 
     def add_point(self, player_name):
@@ -130,14 +130,3 @@ class Score:
 
     def get_score(self):
         return self.state.get_score()
-
-
-class TennisGame:
-    def __init__(self, players: list[str]):
-        self.score = Score(players)
-
-    def add_point(self, player_name: str):
-        self.score.add_point(player_name)
-
-    def get_score(self):
-        return self.score.get_score()
