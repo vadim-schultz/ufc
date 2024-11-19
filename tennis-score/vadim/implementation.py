@@ -67,10 +67,11 @@ class InitialScore(State):
         return Translate(self.context.players[0].points) - Translate(self.context.players[1].points)
 
     def transition(self):
-        if all(i.points == 3 for i in self.context.players):
-            self.context.state = Deuce(context=self.context)
+        if self.context.deuce():
+            return Deuce(context=self.context)
         if not self.context.early_game() and self.context.margin():
-            self.context.state = Game(context=self.context)
+            return Game(context=self.context)
+        return self
 
 
 class Deuce(State):
@@ -79,8 +80,7 @@ class Deuce(State):
         return "Deuce"
 
     def transition(self):
-        if self.context.advantage():
-            self.context.state = Advantage(context=self.context)
+        return Advantage(context=self.context)
 
 
 class Advantage(State):
@@ -90,9 +90,8 @@ class Advantage(State):
 
     def transition(self):
         if self.context.margin():
-            self.context.state = Game(context=self.context)
-        else:
-            self.context.state = Deuce(context=self.context)
+            return Game(context=self.context)
+        return Deuce(context=self.context)
 
 
 class Game(State):
@@ -115,6 +114,9 @@ class Score:
     def advantage(self):
         return abs(self.players[0].points - self.players[1].points) == 1
 
+    def deuce(self):
+        return all(i.points == 3 for i in self.players)
+
     def early_game(self):
         return all(i.points < 4 for i in self.players)
 
@@ -124,7 +126,7 @@ class Score:
 
     def add_point(self, player_name):
         self.players[player_name].points += 1
-        self.state.transition()
+        self.state = self.state.transition()
 
     def get_score(self):
         return self.state.get_score()
