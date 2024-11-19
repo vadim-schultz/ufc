@@ -1,6 +1,6 @@
 import pytest
 
-from florian.implementation import TennisGame
+from vadim.implementation import TennisGame
 
 
 @pytest.fixture
