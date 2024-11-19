@@ -61,7 +61,7 @@ class State:
         ...
 
 
-class InitialScore(State):
+class EarlyGame(State):
 
     def get_score(self):
         return Translate(self.context.players[0].points) - Translate(self.context.players[1].points)
@@ -106,7 +106,7 @@ class Game(State):
 class Score:
     def __init__(self, players: list[str]):
         self.players = Players(players)
-        self.state = InitialScore(context=self)
+        self.state = EarlyGame(context=self)
 
     def margin(self):
         return abs(self.players[0].points - self.players[1].points) >= 2
