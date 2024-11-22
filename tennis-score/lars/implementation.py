@@ -17,7 +17,7 @@ class Player:
         def below_forty() -> str:
             score_self = self.TRANSLATION[self.score]
             if self.score == other.score:
-                return f"{score_self}-All"
+                return f"{score_self}-All" if self.score < 3 else "Deuce"
             score_other = self.TRANSLATION[other.score]
             return f"{score_self}-{score_other}"
 
@@ -27,12 +27,10 @@ class Player:
                     return "Deuce"
                 case 1:
                     return f"Advantage {self.name if (diff > 0) else other.name}"
-                case 2:
-                    return f"Game {self.name if (diff > 0) else other.name}"
                 case _:
-                    raise ValueError(f"Unexpected {diff=}")
+                    return f"Game {self.name if (diff > 0) else other.name}"
 
-        if all(player.score < 3 for player in (self, other)):
+        if all(player.score < 4 for player in (self, other)):
             return below_forty()
         return above_forty()
 
