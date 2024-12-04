@@ -69,7 +69,6 @@ class RomanConverter:
         return self.strategy.convert(value)
 
     @staticmethod
-
     def validate_roman(roman):
         """Validate Roman numeral based on established rules."""
         RomanConverter.check_characters(roman)
