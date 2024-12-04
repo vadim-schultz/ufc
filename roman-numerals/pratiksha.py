@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 
-# Abstract Strategy
+
 class RomanConversionStrategy(ABC):
     @abstractmethod
     def convert(self, value):
         pass
 
-# Integer to Roman Conversion
+
 class IntegerToRomanStrategy(RomanConversionStrategy):
     SYMBOLS = [
         ("M", 1000),
@@ -35,7 +35,7 @@ class IntegerToRomanStrategy(RomanConversionStrategy):
                 number -= value
         return result
 
-# Roman to Integer Conversion
+
 class RomanToIntegerStrategy(RomanConversionStrategy):
     SYMBOL_MAP = {
         "I": 1, "V": 5, "X": 10, "L": 50, "C": 100, "D": 500, "M": 1000
@@ -50,7 +50,7 @@ class RomanToIntegerStrategy(RomanConversionStrategy):
         total = 0
         prev_value = 0
         for char in reversed(roman):
-            value = RomanConverter.SYMBOL_MAP[char]  # Access SYMBOL_MAP directly from RomanConverter
+            value = RomanConverter.SYMBOL_MAP[char]  
             if value < prev_value:
                 total -= value
             else:
@@ -58,9 +58,9 @@ class RomanToIntegerStrategy(RomanConversionStrategy):
             prev_value = value
         return total
 
-# Roman Converter
+
 class RomanConverter:
-    SYMBOL_MAP = RomanToIntegerStrategy.SYMBOL_MAP  # Declare SYMBOL_MAP here explicitly.
+    SYMBOL_MAP = RomanToIntegerStrategy.SYMBOL_MAP  
 
     def __init__(self, strategy: RomanConversionStrategy):
         self.strategy = strategy
@@ -140,7 +140,7 @@ class RomanConverter:
         }
         return prev in valid_subtractions and current in valid_subtractions[prev]
 
-# Factory to Instantiate Converters
+
 class RomanConverterFactory:
     @staticmethod
     def get_converter(conversion_type):
@@ -151,7 +151,7 @@ class RomanConverterFactory:
         else:
             raise ValueError(f"Unknown conversion type: {conversion_type}")
 
-# Public Interface
+
 def to_roman(integer):
     converter = RomanConverterFactory.get_converter("to_roman")
     return converter.convert(integer)
