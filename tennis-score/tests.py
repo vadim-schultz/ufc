@@ -1,6 +1,6 @@
 import pytest
 
-from vadim.implementation import TennisGame
+from vadim.implementation_stateless import TennisGame
 
 
 @pytest.fixture

@@ -7,25 +7,6 @@ class Player:
         self.points = 0
 
 
-class Players:
-    def __init__(self, names):
-        self._players_dict = {name: Player(name) for name in names}
-        self._players_list = list(self._players_dict.values())
-
-    def __getitem__(self, key):
-        if isinstance(key, str):
-            return self._players_dict[key]
-        elif isinstance(key, int):
-            return self._players_list[key]
-        raise TypeError("Key must be a string (name) or an integer (index)")
-
-    def __iter__(self):
-        return iter(self._players_list)
-
-    def __len__(self):
-        return len(self._players_list)
-
-
 class Score:
     names = {
         0: "Love",
@@ -49,18 +30,22 @@ class Score:
 
 
 class State:
-    def __init__(self, context: "TennisGame"):
-        self.context = context
+    def __init__(self, players: list["Player"]):
+        self.players = players
         
     @abstractmethod
     def get_score(self):
         ...
 
+    @property
+    def leader(self):
+        return max(self.players, key=lambda player: player.points)
+
 
 class EarlyGame(State):
 
     def get_score(self):
-        return Score(self.context.players[0].points) - Score(self.context.players[1].points)
+        return Score(self.players[0].points) - Score(self.players[1].points)
 
 
 class Deuce(State):
@@ -72,13 +57,13 @@ class Deuce(State):
 class Advantage(State):
 
     def get_score(self):
-        return f"Advantage {self.context.leader.name}"
+        return f"Advantage {self.leader.name}"
 
 
 class Game(State):
 
     def get_score(self):
-        return f"Game {self.context.leader.name}"
+        return f"Game {self.leader.name}"
 
 
 class Conditions:
@@ -121,19 +106,16 @@ def get_state(conditions):
 
 class TennisGame:
     def __init__(self, players: list[str]):
-        self.players = Players(players)
+        self.players = [Player(i) for i in players]
 
     @property
     def conditions(self):
         return Conditions(players=self.players)
 
-    @property
-    def leader(self):
-        return max(self.players, key=lambda player: player.points)
-
     def add_point(self, player_name):
-        self.players[player_name].points += 1
+        player = [i for i in self.players if i.name == player_name][0]
+        player.points += 1
 
     def get_score(self):
         state = get_state(self.conditions)
-        return state(self).get_score()
+        return state(self.players).get_score()
