@@ -55,10 +55,6 @@ class State:
     @abstractmethod
     def get_score(self):
         ...
-    
-    @abstractmethod
-    def transition(self):
-        ...
 
 
 class EarlyGame(State):
@@ -66,93 +62,78 @@ class EarlyGame(State):
     def get_score(self):
         return Score(self.context.players[0].points) - Score(self.context.players[1].points)
 
-    def transition(self):
-        if self.context._deuce():
-            return Deuce(context=self.context)
-        if not self.context._early_game() and self.context._margin():
-            return Game(context=self.context)
-        return self
-
 
 class Deuce(State):
 
     def get_score(self):
         return "Deuce"
 
-    def transition(self):
-        return Advantage(context=self.context)
-
 
 class Advantage(State):
 
     def get_score(self):
-        return f"Advantage {self.context._leader.name}"
-
-    def transition(self):
-        if self.context._margin():
-            return Game(context=self.context)
-        return Deuce(context=self.context)
+        return f"Advantage {self.context.leader.name}"
 
 
 class Game(State):
 
     def get_score(self):
-        return f"Game {self.context._leader.name}"
+        return f"Game {self.context.leader.name}"
 
 
 class Conditions:
     def __init__(self, players):
         self.players = players
 
-
-    def _margin(self):
+    @property
+    def margin(self):
         return abs(self.players[0].points - self.players[1].points) >= 2
 
-    def _advantage(self):
+    @property
+    def advantage(self):
         return abs(self.players[0].points - self.players[1].points) == 1
 
-    def _deuce(self):
-        return all(i.points == 3 for i in self.players)
-
-    def _early_game(self):
-        return all(i.points < 4 for i in self.players)
+    @property
+    def even(self):
+        return len(set((i.points for i in self.players))) == 1
 
     @property
-    def _leader(self):
-        return max(self.players, key=lambda player: player.points)
+    def winnable(self):
+        return any(i.points >= 4 for i in self.players)
 
-    def get_conditions(self):
-        return (
-            ("margin", self._margin()),
-            ("advantage", self._advantage()),
-            ("deuce", self._deuce()),
-            ("early_game", self._early_game()),
-            # ("leader", self._leader()),
-        )
+    @property
+    def deuceable(self):
+        return any(i.points >= 3 for i in self.players)
 
 
-class StateFactory:
-    states = {
-        (("margin", False), ("advantage", False), ("deuce", False), ("early_game", True)): EarlyGame,
-        (("margin", False), ("advantage", False), ("deuce", True), ("early_game", False)): Deuce,
-        (("margin", False), ("advantage", True), ("deuce", False), ("early_game", False)): Advantage,
-        (("margin", True), ("advantage", False), ("deuce", False), ("early_game", False)): Game,
-    }
+def get_state(conditions):
+    if conditions.winnable and conditions.margin:
+        return Game
 
-    @classmethod
-    def get_for(cls, conditions):
-        return cls.states[conditions]
+    if conditions.winnable and conditions.advantage:
+        return Advantage
+
+    if conditions.deuceable and conditions.even:
+        return Deuce
+
+    return EarlyGame
 
 
 class TennisGame:
     def __init__(self, players: list[str]):
         self.players = Players(players)
-        self.conditions = Conditions(players=self.players)
+
+    @property
+    def conditions(self):
+        return Conditions(players=self.players)
+
+    @property
+    def leader(self):
+        return max(self.players, key=lambda player: player.points)
 
     def add_point(self, player_name):
         self.players[player_name].points += 1
 
     def get_score(self):
-        conditions = self.conditions.get_conditions()
-        state = StateFactory.get_for(conditions)
+        state = get_state(self.conditions)
         return state(self).get_score()
