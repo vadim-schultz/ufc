@@ -18,21 +18,14 @@ class Score:
     def __init__(self, points):
         self.points = points
 
-    def __sub__(self, other: "Score"):
-        this_points = self.names[self.points]
-
-        if self.points == other.points:
-            other_points = "All"
-        else:
-            other_points = self.names[other.points]
-
-        return f"{this_points}-{other_points}"
+    def __str__(self):
+        return self.names[self.points]
 
 
 class State:
     def __init__(self, players: list["Player"]):
         self.players = players
-        
+
     @abstractmethod
     def get_score(self):
         ...
@@ -42,10 +35,16 @@ class State:
         return max(self.players, key=lambda player: player.points)
 
 
+class ScoreAll(State):
+
+    def get_score(self):
+        return f"{Score(self.players[0].points)}-All"
+
+
 class EarlyGame(State):
 
     def get_score(self):
-        return Score(self.players[0].points) - Score(self.players[1].points)
+        return f"{Score(self.players[0].points)}-{Score(self.players[1].points)}"
 
 
 class Deuce(State):
@@ -80,7 +79,7 @@ class Conditions:
 
     @property
     def even(self):
-        return len(set((i.points for i in self.players))) == 1
+        return self.players[0].points == self.players[1].points
 
     @property
     def winnable(self):
@@ -100,6 +99,9 @@ def get_state(conditions):
 
     if conditions.deuceable and conditions.even:
         return Deuce
+
+    if conditions.even:
+        return ScoreAll
 
     return EarlyGame
 
