@@ -1,25 +1,13 @@
 from abc import abstractmethod
 
 
+SCORES = {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty",}
+
+
 class Player:
     def __init__(self, name):
         self.name = name
         self.points = 0
-
-
-class Score:
-    names = {
-        0: "Love",
-        1: "Fifteen",
-        2: "Thirty",
-        3: "Forty",
-    }
-
-    def __init__(self, points):
-        self.points = points
-
-    def __str__(self):
-        return self.names[self.points]
 
 
 class State:
@@ -38,13 +26,13 @@ class State:
 class ScoreAll(State):
 
     def get_score(self):
-        return f"{Score(self.players[0].points)}-All"
+        return f"{SCORES[self.players[0].points]}-All"
 
 
 class EarlyGame(State):
 
     def get_score(self):
-        return f"{Score(self.players[0].points)}-{Score(self.players[1].points)}"
+        return f"{SCORES[self.players[0].points]}-{SCORES[self.players[1].points]}"
 
 
 class Deuce(State):
