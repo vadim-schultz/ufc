@@ -2,9 +2,19 @@
 
 ## Challenges / Coding culture
 
+### Declarative vs imperative paradigm
+
+- imperative paradigm is characterised by verbs
+- declarative paradigm is characterised by properties
+
 ### Make it fast
 
 - as an excuse for no design
+
+### `ìf` is a smell 
+
+- factories is where conditionals go to die
+- null objects
 
 ### FOOP
 
@@ -25,6 +35,12 @@
 
 ### How to identify an object?
 
+- is it "a noun and a verb"?
+  - this may lead to forced properties and behaviours
+- `is-a`, `has-a`, `behaves-like` relationships
+- what changes?
+- extract similarities
+
 ### When to refactor?
 
 - Design pay-off (Martin Fowler)
@@ -33,8 +49,7 @@
 
 ### When to use inheritance and when to use composition
 
-### Sub-class explosion
-
+- Sub-class explosion
 - random echo house (two-axis problem)
 
 ## What did I learn
