@@ -1,5 +1,5 @@
-Bank Kata
----------
+Bank Account Kata
+-----------------
 See the [original kata](https://www.codurance.com/katas/bank).
 
 # Requirements
