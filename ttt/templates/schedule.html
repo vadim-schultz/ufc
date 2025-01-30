@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+
+    <div class="container">
+        <h1 class="display-4">{{ heading }}</h1>
+        <p class="lead">{{ message }}</p>
+        
+        {% set match_id = namespace(value=1) %}
+        {% set x = namespace(value=1) %}
+        {% for round in schedule %}
+        <h2>Round {{ x.value }}</h2>
+        <table class="table table-striped">
+            <col width="10%">
+            <col width="30%">
+            <col width="30%">
+            <col width="30%">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Pairing 1</th>
+                    <th>Pairing 2</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for match in round %}
+                <tr>
+                    <td>{{ match_id.value }}</td>
+                    <td>{{ match[0] }}, {{ match[1] }}</td>
+                    <td>{{ match[2] }}, {{ match[3] }}</td>
+                    <td>
+                        <form action="/result/{{ match_id.value }}">
+                            <input type=submit value="enter" style="width:20%"> 
+                        </form>
+                    </td>
+                </tr>
+                {% set match_id.value = match_id.value + 1 %}
+                {% endfor %}
+            </tbody>
+        </table>
+        {% set x.value = x.value + 1 %}
+        
+        {% endfor %}
+    </div>
+{% endblock %}

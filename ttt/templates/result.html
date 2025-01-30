@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="container">
+        <h1 class="display-4">{{ heading }}</h1>
+        <p class="lead">{{ message }}</p>
+
+        <h2>Result for Match {{ match_id }}</h2>
+
+        <form action="/enter_result/{{ match_id }}" method="post" class="form-inline">
+            <div class="form-group">
+                <label for="result">Result</label>  
+                <input type="text" class="form-control ml-5" id="result" name="result" placeholder="Won Sets Pairing 1">
+                <label for="result" class="ml-3">:</label>
+                <input type="text" class="form-control ml-3" id="result" name="result" placeholder="Won Sets Pairing 2">
+            </div>
+
+            <button type="submit" class="btn btn-primary ml-5">Submit</button>
+        </form>
+        
+    </div>
+{% endblock %}
