@@ -23,3 +23,29 @@ def schedule_from_players(players: ty.List[str]):
     # matches = [dict(zip(players, match)) for match in matches]
 
     return matches
+
+
+def standings_from_results(results, players):
+    standings = []
+    for player in players:
+        score = 0
+        left_side_instances = [result for result in results if result.player0 == player or result.player1 == player]
+        right_side_instances = [result for result in results if result.player2 == player or result.player3 == player]
+
+        # Add scores to each side
+        for matches in left_side_instances:
+            score += matches.score0
+
+        for matches in right_side_instances:
+            score += matches.score1
+
+        standings.append({"name": player, "points": score})
+
+    # Sort list by points
+    standings.sort(key=lambda x: x["points"], reverse=True)
+
+    # Add rank to dict
+    for i, player in enumerate(standings):
+        player["rank"] = i + 1
+
+    return standings

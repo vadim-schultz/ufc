@@ -4,6 +4,10 @@
     <div class="container">
         <h1 class="display-4">{{ heading }}</h1>
         <p class="lead">{{ message }}</p>
+
+        <!-- {% for result in results %}
+        <h2>{{ result }}</h2>
+        {% endfor %} -->
         
         {% set match_id = namespace(value=1) %}
         {% set x = namespace(value=1) %}
@@ -29,7 +33,8 @@
                     <td>{{ match[0] }}, {{ match[1] }}</td>
                     <td>{{ match[2] }}, {{ match[3] }}</td>
                     <td>
-                        <form action="/result/{{ match_id.value }}">
+                        <label for="result" align="left">{{ results[match_id.value - 1][0] }} : {{ results[match_id.value - 1][1] }}</label>
+                        <form action="/result/{{ match_id.value }}" align="right">
                             <input type=submit value="enter" style="width:20%"> 
                         </form>
                     </td>
