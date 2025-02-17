@@ -1,21 +1,35 @@
-from typing import List
+from typing import List, NamedTuple
+from dataclasses import dataclass
 
 
 class Frame:
+    @property
+    def score(self):
+        return 10
+
+    @classmethod
+    def get_for(cls, roll: str):
+        if "X" in roll or "/" in roll:
+            return Frame()
+        return OpenFrame(roll)
+
+
+class OpenFrame:
     def __init__(self, notation: str):
         self.notation = notation
 
     @property
     def score(self):
-        if "X" in self.notation or "/" in self.notation:
-            return 10
         number = self.notation.strip("-")
         return int(number)
 
 
 class Group:
-    def __init__(self, frames: List[Frame]):
-        self.frames = frames
+    LENGTH = 1
+    def __init__(self, notation: str, frames: List[str]):
+        self.notation = notation
+        max_length = min(self.LENGTH, len(frames))
+        self.frames = [Frame.get_for(i) for i in frames[:max_length]]
 
     @property
     def score(self):
@@ -24,14 +38,24 @@ class Group:
     @classmethod
     def get_for(cls, rolls: List[str]):
         roll = rolls[0]
-        group_len = 1
-        if "/" in roll:
-            group_len = 2
         if "X" in roll:
-            group_len = 3
+            return Strike("X", rolls)
+        if "/" in roll:
+            return Spare("/", rolls)
+        return Group(roll, rolls)
 
-        max_len = min(group_len, len(rolls))
-        return cls([Frame(i) for i in rolls[:max_len]])
+    @classmethod
+    def tenth_frame(cls, rolls: List[str]):
+        rolls = [i for i in rolls[0]]
+        ...
+
+
+class Strike(Group):
+    LENGTH = 3
+
+
+class Spare(Group):
+    LENGTH = 2
 
 
 class Game:
@@ -42,9 +66,11 @@ class Game:
     def from_string(cls, rolls: str):
         groups = list()
         rolls = rolls.split()
+        # FIXME parse last frame into separate frames here
         while rolls:
             groups.append(Group.get_for(rolls))
             rolls.pop(0)
+
         return cls(groups)
 
     @property
@@ -53,8 +79,5 @@ class Game:
 
 
 def get_score(rolls: str):
-    return 300
-
-
-game = Game.from_string("X 7/ 9- X -8 8/ -6 X X X81")
-print(game.score)
+    game = Game.from_string(rolls)
+    return game.score
